@@ -11,23 +11,40 @@
  */
 class Solution {
 public:
-vector<int> inorder(TreeNode* root,vector<int> &ans)
-{
-    if(root)
-    {
-        inorder(root->left,ans);
-        ans.push_back(root->val);
-        inorder(root->right,ans);
-    }   
-    return ans;
-}
     vector<int> inorderTraversal(TreeNode* root) {
         vector<int>ans;
         if(root==NULL)
+        return ans;
+        while(root)
         {
-            return ans;
+            if(root->left==NULL)
+            {
+                ans.push_back(root->val);
+                root = root->right;
+            }
+            else
+            {
+                TreeNode* curr = root->left;
+                while(curr->right && curr->right!=root)
+                {
+                    curr=curr->right;
+                }
+                //left subtree is not traversed
+                if(curr->right==NULL)
+                {
+                    curr->right = root;
+                    root=root->left;
+                }
+                else
+                {
+                    curr->right=NULL;
+                    ans.push_back(root->val);
+                    root=root->right;
+                }
+
+
+            }
         }
-        inorder(root,ans);
         return ans;
     }
 };
