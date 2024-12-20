@@ -11,21 +11,19 @@
  */
 class Solution {
 public:
-void solve(TreeNode* left,TreeNode* right,int level)
+void solve(TreeNode*& left,TreeNode* &right,int level)
 {
     if(!left)
     return ;
-    if(level%2==0)
-    {
-        swap(left->val,right->val);
-    }
+    if(level%2!=0)
+    swap(left->val,right->val);
     solve(left->left,right->right,level+1);
     solve(left->right,right->left,level+1);
 }
     TreeNode* reverseOddLevels(TreeNode* root) {
         if(root==NULL)
-        return root;
-        solve(root->left,root->right,2);
+        return NULL;
+        solve(root->left,root->right,1);
         return root;
     }
 };
