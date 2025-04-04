@@ -1,48 +1,50 @@
 class Solution {
 public:
-    int countCompleteComponents(int n, vector<vector<int>>& edges) {
-        // Adjacency lists for each vertex
-        vector<vector<int>> graph(n);
-
-        // Build adjacency lists from edges
-        for (const auto& edge : edges) {
-            graph[edge[0]].push_back(edge[1]);
-            graph[edge[1]].push_back(edge[0]);
+void dfs(int node,vector<bool>&vis,vector<vector<int>> &adj,int &v,int &e)
+{
+    vis[node] = 1;
+    v++;
+    for(auto neigh:adj[node])
+    {
+         e++;
+        if(!vis[neigh])
+        {
+            dfs(neigh,vis,adj,v,e);
         }
-
-        int completeCount = 0;
-        unordered_set<int> visited;
-
-        // Process each unvisited vertex
-        for (int vertex = 0; vertex < n; vertex++) {
-            if (visited.count(vertex)) continue;
-
-            // arr[0] = vertices count, arr[1] = total edges count
-            int componentInfo[2] = {0, 0};
-            dfs(vertex, graph, visited, componentInfo);
-
-            // Check if component is complete - edges should be vertices *
-            // (vertices-1)
-            if (componentInfo[0] * (componentInfo[0] - 1) == componentInfo[1]) {
-                completeCount++;
-            }
-        }
-        return completeCount;
     }
-
-private:
-    void dfs(int curr, vector<vector<int>>& graph, unordered_set<int>& visited,
-             int componentInfo[2]) {
-        visited.insert(curr);
-        componentInfo[0]++;  // Increment vertex count
-        componentInfo[1] +=
-            graph[curr].size();  // Add edges from current vertex
-
-        // Explore unvisited neighbors
-        for (int next : graph[curr]) {
-            if (!visited.count(next)) {
-                dfs(next, graph, visited, componentInfo);
+}
+    int countCompleteComponents(int n, vector<vector<int>>& edges) {
+        vector<int>parent(n);
+        for(int i = 0;i<n;i++)
+        {
+            parent[i] = i;
+        }
+        vector<vector<int>> adj(n);
+        for(auto edge:edges)
+        {
+            int u = edge[0];
+            int v = edge[1];
+            adj[u].push_back(v);
+            adj[v].push_back(u);
+        }
+        int ans = 0;
+        vector<bool>vis(n,0);
+        for(int  i = 0;i<n;i++)
+        {
+            if(!vis[i])
+            {
+                int v = 0;
+                int e = 0;
+                dfs(i,vis,adj,v,e);
+               // return e;
+                int j  = (v*(v-1))/2;
+                if(e/2 ==j )
+                {
+                    ans++;
+                }
             }
         }
+        return ans;
+        
     }
 };
