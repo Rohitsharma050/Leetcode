@@ -10,19 +10,12 @@ public:
         mid=(s+e)/2;
         if(nums[mid]>=nums[s])
         {
-            if(nums[s]<ans)
-            {
-                ans=nums[s];
-            }
+            ans = min(ans,nums[s]);
             s=mid+1;
         }
         else
         {
-            if(nums[mid]<ans)
-            {
-                ans=nums[mid];
-
-            }
+            ans = min(ans,nums[mid]);
             e=mid-1;
         }
 
