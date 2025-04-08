@@ -1,30 +1,17 @@
 class Solution {
 public:
-bool findduplicate(vector<int>nums,int i,int n)
-{
-    unordered_map<int ,int>mp;
-    for(int j = i;j<n;j++)
-        {
-            if(mp.find(nums[j])!=mp.end())
-            {
-                return true;
-            }
-            mp[nums[j]++];
-        }
-    return false;
-}
     int minimumOperations(vector<int>& nums) {
+        unordered_set<int>st;
         int n = nums.size();
-        int count = 0;
-        int i = 0;
-        while(i<n)
+        for(int i = n-1;i>=0;i--)
+        {
+            if(st.count(nums[i]))
             {
-                if(findduplicate(nums,i,n))
-                {
-                    count++;
-                }
-                i+=3;
+                return ceil((i+1)/3.0);
             }
-        return count;
+            st.insert(nums[i]);
+        }
+        return 0;
+
     }
 };
