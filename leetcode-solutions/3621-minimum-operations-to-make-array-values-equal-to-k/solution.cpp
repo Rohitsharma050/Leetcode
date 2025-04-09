@@ -1,20 +1,21 @@
 class Solution {
 public:
     int minOperations(vector<int>& nums, int k) {
-        sort(nums.begin(), nums.end(), greater<int>());
-
-        int op = 0;
-
-        int curr = -1;
-
-        for(int i = 0; i < nums.size(); ++i){
-            if(nums[i] > k && nums[i] != curr){
-                op++;
-                curr = nums[i];
+        int n=nums.size();
+        int cnt = 0;
+        unordered_set<int>st;
+        for(int i = 0;i<n;i++)
+        {
+            if(nums[i]<k)
+            {
+                return -1;
             }
-            if(nums[i] < k) return -1;
+            if(nums[i]>k && st.find(nums[i])==st.end())
+            {
+                 cnt++;
+                 st.insert(nums[i]);
+            }
         }
-
-        return op;
+        return cnt;
     }
 };
