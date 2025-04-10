@@ -1,7 +1,6 @@
 class Solution {
 public:
- vector<vector<int>>ans;
-void getans(int i,int n,int k,vector<int>&temp)
+void solve(int i,int n,int k ,vector<int>&temp,vector<vector<int>>&ans)
 {
     if(temp.size()==k)
     {
@@ -11,26 +10,15 @@ void getans(int i,int n,int k,vector<int>&temp)
     if(i>n)
     return;
     temp.push_back(i);
-    getans(i+1,n,k,temp);
+    solve(i+1,n,k,temp,ans);
     temp.pop_back();
-    getans(i+1,n,k,temp);
+    solve(i+1,n,k,temp,ans);
 }
     vector<vector<int>> combine(int n, int k) {
-       
-        int i = 1;
         vector<int>temp;
-        getans(i,n,k,temp);
+        vector<vector<int>>ans;
+        solve(1,n,k,temp,ans);
         return ans;
+        
     }
 };
-const auto _ = std::cin.tie(nullptr)->sync_with_stdio(false);
-#define LC_HACK
-#ifdef LC_HACK
-const auto __ = []() {
-    struct ___ {
-        static void _() { std::ofstream("display_runtime.txt") << 0 << '\n'; }
-    };
-    std::atexit(&___::_);
-    return 0;
-}();
-#endif
