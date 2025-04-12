@@ -1,135 +1,150 @@
 #include <bits/stdc++.h>
 using namespace std;
+class disjointset{
+    vector<int>parent,rank,size;
+    public:
+    disjointset(int n)
+   {
+        parent.resize(n+1);
+        rank.resize(n+1,0);
+        size.resize(n+1,1);
 
-// Disjoint Set Union with Union by Size
-class DisjointSet {
-    vector<int> parent, size;
-public:
-    DisjointSet(int n) {
-        parent.resize(n + 1);
-        size.resize(n + 1, 1);
-        for (int i = 0; i <= n; i++)
+        for(int i = 0;i<=n;i++)
+        {
             parent[i] = i;
-    }
-
-    int findParent(int x) {
-        if (x == parent[x])
-            return x;
-        return parent[x] = findParent(parent[x]);
-    }
-
-    void unionSize(int x, int y) {
-        int x_root = findParent(x);
-        int y_root = findParent(y);
-        if (x_root == y_root) return;
-        if (size[x_root] > size[y_root]) {
-            parent[y_root] = x_root;
-            size[x_root] += size[y_root];
-        } else {
-            parent[x_root] = y_root;
-            size[y_root] += size[x_root];
+            
         }
     }
-
-    int getSize(int x) {
-        return size[findParent(x)];
+    int findparent(int x)
+    {
+        if(x==parent[x])
+        return x;
+        return parent[x] = findparent(parent[x]);
     }
-};
+    void unionRank(int x,int y)
+    {
+        int x_parent = findparent(x);
+        int y_parent = findparent(y);
+        if(x_parent==y_parent)
+        {
+            return;
+        }
+        if(rank[x_parent]==rank[y_parent])
+        {
+            parent[x_parent] = y_parent;
+            rank[y_parent]++;
+        }
+        else if(rank[x_parent]>rank[y_parent])
+        {
+            parent[y_parent] = x_parent;
+        }
+        else{
+            parent[x_parent] = y_parent;
+        }
+    }
+    void unionSize(int x,int y)
+    {
+         int x_parent = findparent(x);
+        int y_parent = findparent(y);
+        if(x_parent==y_parent)
+        {
+            return;
+        }
+        if(size[x_parent]>size[y_parent])
+        {
+            parent[y_parent] = x_parent;
+            size[x_parent]+=size[y_parent];
+        }
+        else
+        {
+            parent[x_parent] = y_parent;
+            size[y_parent]+=size[x_parent];
+        }
+    }
+    int getsize(int x)
+    {
+        return size[findparent(x)];
+    }
 
+};
+int index(int i,int j,int m){
+    return i*m+j;
+}
+bool isvalid(int i,int j,int n,int m)
+{
+    return i>=0 && i<n && j>=0 && j<m;
+}
 class Solution {
 public:
-    // Check if cell is within grid bounds
-    bool isValid(int i, int j, int m, int n) {
-        return i >= 0 && i < m && j >= 0 && j < n;
-    }
-
-    // Convert 2D (i,j) to 1D index
-    int index(int i, int j, int n) {
-        return i * n + j;
-    }
-
     vector<int> hitBricks(vector<vector<int>>& grid, vector<vector<int>>& hits) {
-        int m = grid.size();
-        int n = grid[0].size();
-        int total = m * n;
-        int roof = total;  // Virtual node for roof
-        DisjointSet ds(total + 1); // DSU for total cells + 1 virtual node
-
-        vector<vector<int>> copyGrid = grid;
-
-        // Step 1: Apply all hits in advance
-        for (auto& hit : hits) {
-            int x = hit[0], y = hit[1];
-            if (copyGrid[x][y] == 1)
-                copyGrid[x][y] = 0;
+        int n  =  grid.size();
+        int m = grid[0].size();
+        vector<vector<int>>copy;
+        copy = grid;
+        int hitsize = hits.size();
+        int roof = m*n;
+        disjointset ds((n*m)+1);
+        for(int i = 0;i<hitsize;i++)
+        {
+            int x= hits[i][0];
+            int y = hits[i][1];
+            if(copy[x][y]==1)
+            copy[x][y] = 0;     
         }
-
-        // Directions: up, right, down, left
-        int dr[] = {-1, 0, 1, 0};
-        int dc[] = {0, 1, 0, -1};
-
-        // Step 2: Build DSU from remaining grid
-        for (int i = 0; i < m; ++i) {
-            for (int j = 0; j < n; ++j) {
-                if (copyGrid[i][j] == 1) {
-                    int curr = index(i, j, n);
-                    if (i == 0) {
-                        ds.unionSize(curr, roof); // Connect top row to roof
+        int dr[] = {-1,0,1,0};
+        int dc[] = {0,1,0,-1};
+        for(int i = 0;i<n;i++)
+        {
+            for(int j = 0;j<m;j++)
+            {
+                if(copy[i][j]==1)
+                {
+                    if(i==0)
+                    {
+                        ds.unionSize(roof,index(i,j,m));
                     }
-                    for (int k = 0; k < 4; ++k) {
-                        int ni = i + dr[k];
-                        int nj = j + dc[k];
-                        if (isValid(ni, nj, m, n) && copyGrid[ni][nj] == 1) {
-                            int neighbor = index(ni, nj, n);
-                            ds.unionSize(curr, neighbor);
-                        }
+                    for(int k = 0;k<4;k++)
+                {
+                    int newi = i+dr[k];
+                    int newj = j+dc[k];
+                    if(isvalid(newi,newj,n,m) && copy[newi][newj]==1)
+                    {
+                        ds.unionSize(index(i,j,m),index(newi,newj,m));
                     }
                 }
+                    
+                }
+
+                
             }
         }
-
-        vector<int> res(hits.size());
-
-        // Step 3: Process hits in reverse
-        for (int i = hits.size() - 1; i >= 0; --i) {
-            int x = hits[i][0], y = hits[i][1];
-
-            // If original grid had no brick, skip
-            if (grid[x][y] == 0) {
+        vector<int>res(hitsize);
+        for(int i=hitsize-1;i>=0;i--)
+        {
+            int x = hits[i][0];
+            int y = hits[i][1];
+            int idx = index(x,y,m);
+            if(grid[x][y]==0)
+            {
                 res[i] = 0;
                 continue;
             }
-
-            // Get size of roof component before restoring
-            int prevRoofSize = ds.getSize(roof);
-
-            // Restore the brick in copyGrid
-            copyGrid[x][y] = 1;
-            int currIdx = index(x, y, n);
-
-            // If it's in the top row, connect it to roof
-            if (x == 0) {
-                ds.unionSize(currIdx, roof);
-            }
-
-            // Connect to all adjacent bricks
-            for (int k = 0; k < 4; ++k) {
-                int ni = x + dr[k];
-                int nj = y + dc[k];
-                if (isValid(ni, nj, m, n) && copyGrid[ni][nj] == 1) {
-                    int neighbor = index(ni, nj, n);
-                    ds.unionSize(currIdx, neighbor);
+            int prevsize = ds.getsize(roof);
+            copy[x][y] = 1;
+            if(x==0)
+            ds.unionSize(idx,roof);
+            for(int j = 0;j<4;j++)
+            {
+                int newi = x+dr[j];
+                int newj  = y+dc[j];
+                if(isvalid(newi,newj,n,m)&& copy[newi][newj]==1)
+                {
+                    ds.unionSize(idx,index(newi,newj,m));
                 }
             }
-
-            // Get size of roof component after restoring
-            int currRoofSize = ds.getSize(roof);
-
-            // Bricks that fell = new connections - the one brick we added
-            res[i] = max(0, currRoofSize - prevRoofSize - 1);
+            int currsize = ds.getsize(roof);
+            res[i] = max(0,currsize-prevsize-1);
         }
-
         return res;
     }
 };
-
