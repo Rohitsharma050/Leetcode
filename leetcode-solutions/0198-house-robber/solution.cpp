@@ -1,24 +1,18 @@
 class Solution {
 public:
-vector<int>dp;
-int check(int i,int n,vector<int>&nums)
-{
-    if(i>=n)
-    {
-
-       return 0;
-    }
-    if(dp[i]!=-1)
-    {
-        return dp[i];
-    }
-    int take = nums[i]+check(i+2,n,nums);
-    int nottake = check(i+1,n,nums);
-    return dp[i] = max(take,nottake);
-}
     int rob(vector<int>& nums) {
         int n = nums.size();
-        dp = vector<int>(n+1,-1);
-        return check(0,n,nums);
+        if(n==1)
+        return nums[0];
+        int secondprev = nums[0];
+        int prev = max(nums[0],nums[1]);
+        for(int i = 2;i<n;i++)
+        {
+            int temp = prev;
+            int one  = nums[i]+secondprev;
+            secondprev = temp;
+            prev = max(secondprev,one);
+        }
+        return prev;
     }
 };
