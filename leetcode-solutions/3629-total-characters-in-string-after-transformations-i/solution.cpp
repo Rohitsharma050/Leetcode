@@ -29,4 +29,3 @@ public:
         return (int)result;
     }
 };
-
