@@ -1,24 +1,24 @@
 class Solution {
 public:
-int solve(int i,int target,int n,vector<int>& coins,vector<vector<int>>&dp)
+int solve(int i,int amount,vector<int>& coins,vector<vector<int>>&dp)
 {
-    if(i>=n)
-    return 0;
-    if(target==0)
-    return 1;
-    if(target<0)
-    return 0;
-    if(dp[i][target]!=-1)
+    if(i<0)
     {
-        return dp[i][target];
+        if(amount==0)
+        return 1;
+        return 0;
     }
-    int take = solve(i,target-coins[i],n,coins,dp);
-    int nottake = solve(i+1,target,n,coins,dp);
-    return dp[i][target] = take+nottake;
+    if(amount<0)
+    return 0;
+    if(dp[i][amount]!=-1)
+    return dp[i][amount];
+    int nottake = solve(i-1,amount,coins,dp);
+    int take = solve(i,amount-coins[i],coins,dp);
+    return dp[i][amount]= take+nottake;
 }
     int change(int amount, vector<int>& coins) {
         int n = coins.size();
         vector<vector<int>>dp(n+1,vector<int>(amount+1,-1));
-        return solve(0,amount,n,coins,dp);
+        return solve(n-1,amount,coins,dp);
     }
 };
