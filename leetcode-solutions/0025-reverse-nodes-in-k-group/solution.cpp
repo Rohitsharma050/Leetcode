@@ -10,44 +10,35 @@
  */
 class Solution {
 public:
-int lent(ListNode* head)
-{   int cnt=0;
-    while(head!=NULL)
-    {   cnt++;
-        head=head->next;
-    }
-    return cnt;
+int findLength(ListNode* head)
+{
+    if(head==NULL)
+    return 0;
+    return 1+findLength(head->next);
 }
     ListNode* reverseKGroup(ListNode* head, int k) {
-        //Base case
-        if(head==NULL)
-        return head;
-        int len = lent(head);
-        int count=0;
-        //first step
-        ListNode* forward = NULL;
+        if(head==NULL || head->next==NULL)
+        {
+            return head;
+        }
+        int len = findLength(head);
         ListNode* curr = head;
-        ListNode*prev = NULL;
-        
-        while(curr!=NULL && count<k)
-        {   
-            
-                forward = curr->next;
-                curr->next = prev;
-                prev = curr;
-                curr = forward ;
-                count++;
-            
-        }
-        if(forward!=NULL && (len-count)>=k)
+        ListNode* forward = NULL;
+        ListNode* prev = NULL;
+        int cnt =0;
+        while(curr && cnt<k )
         {
-            head->next = reverseKGroup(forward,k);
+            forward = curr->next;
+            curr->next = prev;
+            prev = curr;
+            curr = forward;
+            cnt++;
         }
-        else
-        {
+        if(forward!=NULL && (len-cnt)>=k)
+        head->next = reverseKGroup(forward,k);
+        else{
             head->next = curr;
         }
-      
         return prev;
-    }
+    }   
 };
