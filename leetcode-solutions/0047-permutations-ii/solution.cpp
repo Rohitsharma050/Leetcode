@@ -1,28 +1,32 @@
 class Solution {
 public:
-void getpermutations(int index,vector<vector<int>> &ans,vector<int> &nums)
-{
-    if(index==nums.size())
+void solve(vector<int>& nums,vector<int>&temp,vector<int>&vis,vector<vector<int>>&ans){
+    if(temp.size()==nums.size())
     {
-        ans.push_back(nums);
+        ans.push_back(temp);
         return;
     }
-    unordered_set<int> s;
-    for(int i=index;i<nums.size();i++)
-    {   if(s.find(nums[i])!=s.end())
+
+    for(int i = 0;i<nums.size();i++)
+    {
+        if(vis[i])
         continue;
-        s.insert(nums[i]);
-        swap(nums[index],nums[i]);
-        getpermutations(index+1,ans,nums);
-        
-        swap(nums[index],nums[i]);
+        if(i>0 && nums[i]==nums[i-1] && vis[i-1]==false )
+        continue;
+        temp.push_back(nums[i]);
+        vis[i] = 1;
+        solve(nums,temp,vis,ans);
+        temp.pop_back();
+        vis[i] = 0;
 
     }
-    
 }
     vector<vector<int>> permuteUnique(vector<int>& nums) {
-          vector<vector<int>> ans;
-        getpermutations(0,ans,nums);
+        vector<vector<int>>ans;
+        vector<int>temp;
+        vector<int>vis(nums.size(),0);
+        sort(nums.begin(),nums.end());
+        solve(nums,temp,vis,ans);
         return ans;
     }
 };
