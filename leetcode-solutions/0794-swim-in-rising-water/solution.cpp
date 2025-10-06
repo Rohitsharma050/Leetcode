@@ -1,41 +1,41 @@
 class Solution {
 public:
-typedef pair<int,pair<int,int>>P;
-bool isvalid(int i, int j, int n, int m) {
-    return i < n && i >= 0 && j < m && j >= 0;
+typedef pair<int,pair<int,int>> P;
+bool isValid(int i,int j,int n)
+{
+    return i<n && j<n && i>=0 && j>=0;
 }
+vector<vector<int>>dir = {{-1,0},{0,1},{1,0},{0,-1}};
     int swimInWater(vector<vector<int>>& grid) {
         int n = grid.size();
-        int m = grid[0].size();
-        priority_queue<P,vector<P>,greater<P>>pq;
-        vector<vector<int>>vis(n,vector<int>(m,0));
-        int t = 0;
-        pq.push({t,{0,0}});
-        vis[0][0] = 1;
-        while(!pq.empty())
+        priority_queue<P,vector<P>,greater<P>>q;
+        q.push({grid[0][0],{0,0}});//{time,i,j};
+        vector<vector<int>>cost(n,vector<int>(n,INT_MAX));
+        
+        while(!q.empty())
         {
-            auto it = pq.top();
-            pq.pop();
-            int r = it.second.first;
-            int c = it.second.second;
-            int currtime = it.first;
-            t = max(t,grid[r][c]);
-            if(r==n-1 && c==m-1)
-            return t;
-            int dr[] = {-1,0,1,0};
-            int dc[] = {0,1,0,-1};
-            for(int i = 0;i<4;i++)
+            auto it = q.top();
+            q.pop();
+            int currCost = it.first;
+            int i = it.second.first;
+            int j = it.second.second;
+            if(i==n-1 && j==n-1)
+            return currCost;
+            for(int k = 0;k<4;k++)
             {
-                int newr = r+dr[i];
-                int newc = c+dc[i];
-                if(isvalid(newr,newc,n,m) && !vis[newr][newc])
+                int newi = i+dir[k][0];
+                int newj = j+dir[k][1];
+                if(isValid(newi,newj,n))
                 {
-                   pq.push({grid[newr][newc],{newr,newc}});
-                   vis[newr][newc] = 1;
+                    if( max(currCost,grid[newi][newj])<cost[newi][newj])
+                    {cost[newi][newj] = max(currCost,grid[newi][newj]);
+                    q.push({cost[newi][newj],{newi,newj}});}
+                    
                 }
             }
-
+            
+            
         }
-        return t;
+        return -1;
     }
 };
