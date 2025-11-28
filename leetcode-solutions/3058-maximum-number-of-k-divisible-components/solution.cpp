@@ -31,4 +31,3 @@ public:
         return count; // Return the total count of valid components
     }
 };
-
